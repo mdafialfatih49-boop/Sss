@@ -15,6 +15,20 @@ jobs:
       - name: Extract Mutant Boss Pack
         run: unzip -q Mutant-Boss-Pack-Fabric-1.20.1-Source.zip -d mutant-boss-pack
 
+      - name: Locate Gradle Project
+        shell: bash
+        run: |
+          PROJECT_DIR=$(find mutant-boss-pack -type f \( -name "settings.gradle" -o -name "settings.gradle.kts" \) -printf '%h\n' | head -n 1)
+
+          if [ -z "$PROJECT_DIR" ]; then
+            echo "Gradle settings file not found!"
+            find mutant-boss-pack -maxdepth 4 -type f
+            exit 1
+          fi
+
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+          echo "Found project: $PROJECT_DIR"
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -26,9 +40,9 @@ jobs:
 
       - name: Build Mutant Boss Pack
         run: gradle build
-        working-directory: mutant-boss-pack
+        working-directory: ${{ env.PROJECT_DIR }}
 
       - uses: actions/upload-artifact@v4
         with:
           name: Mutant-Boss-Pack-Fabric-1.20.1
-          path: mutant-boss-pack/build/libs/*.jar
+          path: ${{ env.PROJECT_DIR }}/build/libs/*.jar
