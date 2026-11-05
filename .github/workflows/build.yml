@@ -1,0 +1,34 @@
+
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract Mutant Boss Pack
+        run: unzip -q Mutant-Boss-Pack-Fabric-1.20.1-Source.zip -d mutant-boss-pack
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.8
+
+      - name: Build Mutant Boss Pack
+        run: gradle build
+        working-directory: mutant-boss-pack
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Mutant-Boss-Pack-Fabric-1.20.1
+          path: mutant-boss-pack/build/libs/*.jar
