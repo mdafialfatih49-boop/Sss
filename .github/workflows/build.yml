@@ -11,8 +11,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Extract Sheepking Mod
-        run: unzip -q "Sheepking mod source.zip" -d sheepking
+      - name: Extract Mod Zip (Auto)
+        run: |
+          ZIP_FILE=$(find . -maxdepth 1 -name "*.zip" | head -n 1)
+          if [ -z "$ZIP_FILE" ]; then
+            echo "Error: Zip file not found in repository!"
+            exit 1
+          fi
+          echo "Found zip file: $ZIP_FILE"
+          unzip -q "$ZIP_FILE" -d sheepking
 
       - name: Locate Gradle Project
         shell: bash
@@ -37,7 +44,7 @@ jobs:
         with:
           gradle-version: 8.8
 
-      - name: Build Sheepking Mod
+      - name: Build Mod with Gradle
         run: gradle build
         working-directory: ${{ env.PROJECT_DIR }}
 
