@@ -18,7 +18,7 @@ jobs:
 
       - name: Check Source ZIP
         run: |
-          if [ ! -f "Crowley_Source_Fabric_1.20.1.zip" ]; then
+          if [ ! -f "Crowley_Source_Fabric_1.20.1_FIXED.zip" ]; then
             echo "Source ZIP not found!"
             echo "Files in repository:"
             ls -la
@@ -27,7 +27,7 @@ jobs:
 
       - name: Extract The Crowley Mod
         run: |
-          unzip -q Crowley_Source_Fabric_1.20.1.zip -d the-crowley-mod
+          unzip -q Crowley_Source_Fabric_1.20.1_FIXED.zip -d the-crowley-mod
 
       - name: Locate Gradle Project
         shell: bash
