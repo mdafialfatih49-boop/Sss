@@ -1,0 +1,47 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract Sheep King Mod
+        run: unzip -q sheepking-mod-source.zip -d sheepking-mod
+
+      - name: Locate Gradle Project
+        shell: bash
+        run: |
+          PROJECT_DIR=$(find sheepking-mod -type f \( -name "settings.gradle" -o -name "settings.gradle.kts" \) -printf '%h\n' | head -n 1)
+
+          if [ -z "$PROJECT_DIR" ]; then
+            echo "Gradle settings file not found!"
+            find sheepking-mod -maxdepth 4 -type f
+            exit 1
+          fi
+
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+          echo "Found project: $PROJECT_DIR"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.8
+
+      - name: Build Sheep King Mod
+        run: gradle build
+        working-directory: ${{ env.PROJECT_DIR }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Sheep-King-Fabric-1.20.1
+          path: ${{ env.PROJECT_DIR }}/build/libs/*.jar
