@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Extract Moonbound
-        run: unzip -q Moonbound-Fabric-1.20.1-Source.zip -d moonbound
+        run: unzip -q Moonbound-Fabric-1.20.1-Source-FIXED.zip -d moonbound
 
       - name: Locate Gradle Project
         shell: bash
